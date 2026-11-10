@@ -1,0 +1,59 @@
+name: "🐛 Bug melden"
+description: "Fehler im Streamen-/GGP-Projekt melden – ohne Zugriff auf den Programmcode."
+title: "[BUG] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Danke für deine Fehlermeldung! Beschreibe, was passiert ist. Eine Erklärung der technischen Ursache ist **nicht** nötig.
+
+        **Öffentlich sichtbar:** Bitte keine Passwörter, Tokens, privaten IP-Adressen, persönlichen Daten oder unbearbeiteten Logs/Screenshots hochladen. Ideen gehören in **Discussions → Ideas**.
+  - type: textarea
+    id: actual
+    attributes:
+      label: "Was funktioniert nicht?"
+      description: "Was ist tatsächlich passiert?"
+      placeholder: "Beim Start von ... passiert ..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Was sollte stattdessen passieren?"
+      placeholder: "Eigentlich sollte ..."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Wie kann man den Fehler nachstellen?"
+      description: "Wenn du es nicht weißt, schreib einfach 'Unbekannt'."
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: false
+  - type: input
+    id: environment
+    attributes:
+      label: "Betroffene Funktion / Version / Gerät (falls bekannt)"
+      placeholder: "z. B. Minigame !sprint, Android, Webseite"
+    validations:
+      required: false
+  - type: textarea
+    id: evidence
+    attributes:
+      label: "Weitere Hinweise oder Screenshots (optional)"
+      description: "Nur bereinigte, zur Veröffentlichung geeignete Informationen teilen."
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: "Vor dem Absenden"
+      options:
+        - label: "Ich habe nach einem ähnlichen Fehler gesucht, soweit es mir möglich war."
+          required: false
+        - label: "Meine Meldung enthält keine Passwörter, geheimen Zugangsdaten oder privaten Informationen."
+          required: true
