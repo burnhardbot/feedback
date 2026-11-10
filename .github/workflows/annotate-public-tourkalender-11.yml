@@ -1,4 +1,4 @@
-name: GGP Idea 11 - Tourkalender-Entscheidung B dokumentieren
+name: GGP Idea 11 - Tourkalender-Entscheidung C dokumentieren
 
 # Einmalig und idempotent. Kein Build, keine geheimen Links, keine Produktumstellung.
 on:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Confirm target and comment approved decision B
+      - name: Confirm target and comment approved decision C
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPOSITORY: ${{ github.repository }}
@@ -31,7 +31,7 @@ jobs:
               raise RuntimeError("Wrong repository for public idea")
           token = os.environ["GH_TOKEN"]
           api = "https://api.github.com/graphql"
-          marker = "<!-- streamen-tourcalendar-idea11-decision-b-20261110 -->"
+          marker = "<!-- streamen-tourcalendar-idea11-decision-c-20261110 -->"
 
           query = """
           query($cursor: String) {
@@ -94,14 +94,19 @@ jobs:
           else:
               body = (
                 "**STATUS: IN UMSETZUNG – PLANUNG AKTIV (10.11.2026)**\n\n"
-                "**Verbindlich entschieden: Variante B.** "
-                "Eine GGP-Etappe darf mehreren Touren gleichzeitig zugeordnet sein, "
-                "und jede Tour hat ihre **eigene Wertung**. "
-                "Ein offiziell bestaetigtes Etappenergebnis wird dabei nicht mehrfach "
-                "erzeugt; es kann einmal je zugeordneter Tour zu deren getrenntem Ranking "
-                "beitragen, ohne globale Kilometer, Punkte oder Etappensiege zu verdoppeln.\n\n"
-                "**Noch offen:** Darf diese Tour-Zuordnung nach dem Etappenstart geaendert "
-                "werden oder nur davor? Weitere Entscheidungen folgen schrittweise.\n\n"
+                "**Verbindlich entschieden: Variante C, zusaetzlich zu B.** "
+                "Etappen duerfen mehreren Touren mit eigenen Rankings angehoeren. "
+                "Ihre Tourzuordnung darf durch berechtigte Verwaltung **auch nach Etappenende "
+                "rueckwirkend korrigiert werden**, also Touren hinzufuegen oder entfernen.\n\n"
+                "**Pflicht:** Jede Korrektur erhaelt ein nachvollziehbares Aenderungsprotokoll "
+                "(wer, wann, vorher/nachher, Revision und Grund). "
+                "Die **betroffenen Tourwertungen** werden entsprechend neu berechnet. "
+                "Die originalen offiziellen Etappenergebnisse bleiben erhalten; "
+                "globale Kilometer, Punkte und Sieger werden nicht doppelt gebucht. "
+                "Korrigierte Rankings und Archivansichten muessen konsistent sein.\n\n"
+                "**Noch offen:** Duerfen Etappen eines Streamers auch einer Tour "
+                "eines anderen Streamers zugeordnet werden? "
+                "Weitere Entscheidungen folgen schrittweise.\n\n"
                 "**Statusgrenze:** Technische Planung ist aufgenommen, "
                 "noch kein neuer Server-Build, keine neue Livefreigabe und keine "
                 "abgeschlossene Realabnahme.\n\n" + marker)
