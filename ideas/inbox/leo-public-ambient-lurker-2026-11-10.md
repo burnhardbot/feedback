@@ -1,9 +1,17 @@
-# [OFFEN] [IDEE] Lebendige Rennstrecke: Lurker-Figuren und !lurk-Animation
+# [OFFEN] [VERWORFEN] Zusätzliche zufällige Lurker-Figuren
 **Dokument-/Archivstatus:** [OFFEN]
 
 **Ideengeber:** Leo (`@leoburnhard`)  
 **Bereich:** GGP / STREAMEN-Community  
-**Stand:** Öffentliche Ideensammlung, noch kein Entwicklungsauftrag.
+**Stand:** **VERWORFEN für die Generierung zusätzlicher zufälliger Lurker (Nutzerentscheidung 10.11.2026)**. Bestehende echte `!lurk`-Funktion bleibt unangetastet.
+
+## Verbindliche Entscheidung vom 10.11.2026
+
+**Keine zufällig generierten/dekorativen 5–8 Lurker-Fahrer.** Im automatischen Peloton-Besatz beim **Etappenstart** und **nach Sprint-/anderen Spielenden** sollen ausschließlich nachweisbar zugeordnete **Wattfahrer, Streamer, VIPs, Abonnenten und Vortagssieger** erscheinen bzw. bei Bedarf wieder eingeblendet werden. Keine Fake-LIVE-/Watt-/Chatter-Zustände und keine automatischen Minigame-Anmeldungen. Bestehende echte Chat-/Spielteilnahme und vorhandene `!lurk`-Ausstiegsanimationen werden durch diese Entscheidung **nicht** verworfen oder zurückgebaut.
+
+Die Idee mit **zusätzlichen Ambient-Fahrern ist verworfen**; bestehende echte Personen-/Rollenfunktionen werden intern weiter geprüft und umgesetzt. Es werden keine neuen privaten Techniklinks öffentlich geteilt.
+
+## Historischer Vorschlag – nicht mehr gültig
 
 Die GGP-Rennstrecke soll lebendiger wirken: gelegentlich etwa 5–8 dekorative Lurker-Figuren am Ende des Fahrerfeldes und eine besondere Animation für den Chatbefehl `!lurk`.
 
