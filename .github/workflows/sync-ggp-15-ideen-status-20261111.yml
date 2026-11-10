@@ -1,0 +1,109 @@
+name: GGP - 12 bestehende Ideas mit K8-Code-Status synchronisieren
+
+# Einmaliges idempotentes Statusprotokoll, keine Produktsoftware und keine neuen Issues.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/sync-ggp-15-ideen-status-20261111.yml'
+
+permissions:
+  contents: read
+  discussions: write
+
+jobs:
+  annotate-existing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Verify and annotate 12 existing Ideas without duplication
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from urllib.request import Request, urlopen
+
+          if os.environ.get("GH_REPOSITORY") != "burnhardbot/feedback":
+              raise RuntimeError("Wrong repository, refuse mutation")
+          entries = json.loads(r'''[{"number":1,"status":"OFFEN – KONZEPT","code":"Tourkalender und Rankings vorhanden; kein Adventskalender-/Türchen-/Gewinnsystem im K8-Code nachgewiesen.","rest":"Tagesfreigabe, Preise, Ziehung/Einlösung und Audit."},{"number":3,"status":"OFFEN – KONZEPT","code":"Results/API vorhanden. Discord↔Tourfunk dient der Audio-/Voice-Brücke, nicht Gewinner-Nachrichten.","rest":"Ergebnis-/Trikotbenachrichtigungen und Regelwerk in drei Längen."},{"number":4,"status":"ZUKUNFT – PARKPLATZ","code":"Scores/Kanalpunkte vorhanden, jedoch kein handelbares Item-Inventar oder Shop.","rest":"Handel/Shop/Transaktionsjournal/Ownerentscheidung; kein Bauauftrag."},{"number":5,"status":"OFFEN – MEDIENPROJEKT","code":"Assets, Grafikroutinen und Design-/Artworkstandards vorhanden.","rest":"Vollständig freigegebene Logo-/Trailer-/Banner-/Emote-/Season-Pakete nicht nachgewiesen."},{"number":6,"status":"TEILWEISE UMGESETZT – REST OFFEN","code":"Watt-Friends, Streamer und Zwift-Datenquellen/Identitätsprojektion bestehen.","rest":"Mixed-Pickles-Group-Ride-Bonuspunkte nicht nachgewiesen; keine Telemetrie-km doppelt buchen."},{"number":7,"status":"TEILWEISE UMGESETZT – UX-/OBS-REST OFFEN","code":"Panorama, Timer, Join-/Rennphasen und Overlay-Renderer vorhanden.","rest":"Timer-Überdeckung, Straßenbreite und transparenter Zuschnitt nicht vollständig visuell abgenommen."},{"number":8,"status":"OFFEN – PREISE-/CHALLENGE-KONZEPT","code":"Offizielle Wertungen und Gewinnerdaten vorhanden.","rest":"Katalog für Tourpreise, Wunsch-Tickets und Challenge-Einlösungen nicht implementiert."},{"number":9,"status":"OFFEN – SEASON-KONZEPT","code":"Jahr/Woche/Tour/Etappe und Reset-Grenzen vorhanden.","rest":"Drei-Seasons-Lifecycle, Saison-Snapshots, Archivabschluss nicht nachgewiesen."},{"number":10,"status":"ZUKUNFT – PARKPLATZ","code":"OBS-Szenen-Director bereits vorhanden.","rest":"Eigenständiger burnhard_bot-Livestream mit sicherem Jan-/Leo-Regiewechsel nicht implementiert."},{"number":12,"status":"OFFEN – JAN-TRIKOT-INVENTAR-PILOT","code":"Etappensieger-Outfits und Kanalpunkte bereits vorhanden, aber kein konsumierbares Zuschauerinventar.","rest":"`!trikots`, `!verleihe`, persönliche Bestände und atomare Einlösungen nicht nachgewiesen."},{"number":13,"status":"TEILWEISE UMGESETZT – VISUELLE RESTE OFFEN","code":"Twitch-Raid-/Rollenereignisse und Badge-Basis vorhanden.","rest":"Raid-/Streak-/VIP-/Sub-Animationen nicht vollständig abgenommen; keine künstlichen Zufallsfahrer."},{"number":15,"status":"OFFEN – WINTERKONZEPT","code":"Twitch-Kanalpunkte und Effekt-/Redemption-Pipeline vorhanden.","rest":"`!snowman`, `!snowball`, Superrakete nicht als vollständige Funktion belegt."}]''')
+          endpoint="https://api.github.com/graphql"
+          marker_prefix="<!-- ggp-15-ideen-code-audit-2026-11-11:"
+          source="https://github.com/burnhardbot/feedback/blob/main/docs/GGP-15-IDEEN-STATUS-2026-11-11.md"
+
+          query = """
+          query($number: Int!, $cursor: String) {
+            repository(owner: "burnhardbot", name: "feedback") {
+              discussion(number: $number) {
+                id number title closed category { name }
+                comments(first: 100, after: $cursor) {
+                  nodes { body }
+                  pageInfo { hasNextPage endCursor }
+                }
+              }
+            }
+          }
+          """
+          mutation = """
+          mutation($id: ID!, $body: String!) {
+            addDiscussionComment(input: { discussionId: $id, body: $body }) {
+              comment { url }
+            }
+          }
+          """
+          def graphql(document, variables):
+              req=Request(endpoint, data=json.dumps({"query":document,"variables":variables}).encode("utf-8"),
+                          headers={"Authorization":"Bearer "+os.environ["GH_TOKEN"],
+                                   "Accept":"application/vnd.github+json",
+                                   "Content-Type":"application/json",
+                                   "User-Agent":"streamen-ggp-15-ideas-audit"})
+              with urlopen(req,timeout=40) as res: obj=json.load(res)
+              if obj.get("errors"): raise RuntimeError(str(obj["errors"]))
+              return obj["data"]
+
+          updated=0
+          skipped=0
+          for e in entries:
+              num=e["number"]
+              marker=marker_prefix+str(num)+" -->"
+              cursor=None
+              found=False
+              disc=None
+              while True:
+                  record=graphql(query,{"number":num,"cursor":cursor})["repository"]
+                  disc=record["discussion"] if record else None
+                  if not disc or disc["number"]!=num: raise RuntimeError("Wrong/missing Discussion "+str(num))
+                  if (disc["category"]["name"] or "").casefold()!="ideas":
+                      raise RuntimeError("Not Ideas category: "+str(num))
+                  page=disc["comments"]["pageInfo"]
+                  found=found or any(marker in (x.get("body") or "") for x in disc["comments"]["nodes"])
+                  if not page["hasNextPage"]: break
+                  cursor=page["endCursor"]
+                  if not cursor: raise RuntimeError("Missing pagination cursor")
+              if disc["closed"]: raise RuntimeError("Unexpectedly closed Discussion #"+str(num)+"; no reopening")
+              if found:
+                  skipped+=1
+                  print("Already annotated #"+str(num))
+                  continue
+              body=(
+                  "**STATUSINVENTUR 11.11.2026 – "+e["status"]+"**\\n\\n"
+                  "**Bereits im Original-K8-Code:** "+e["code"]+"\\n\\n"
+                  "**Nicht fertig / Rest:** "+e["rest"]+"\\n\\n"
+                  "**Einordnung:** Das Vorhandensein von Teilfunktionen ist keine "
+                  "vollständige Implementierung oder Livefreigabe. Eine Idee wird nicht "
+                  "automatisch als fertig archiviert und verursacht keinen neuen Build "
+                  "oder doppelten GitHub-Issue-Auftrag. "
+                  "Verworfenes und bereits in aktiver Planung befindliche Ideen werden "
+                  "separat geführt.\\n\\n"
+                  "**Gesamtübersicht:** "+source+"\\n\\n"+marker
+              )
+              result=graphql(mutation,{"id":disc["id"],"body":body})
+              note=result["addDiscussionComment"]["comment"]
+              if not note or not note.get("url"): raise RuntimeError("No confirmed comment for #"+str(num))
+              print("Updated #"+str(num)+": "+note["url"])
+              updated+=1
+          if len(entries)!=12: raise RuntimeError("Unexpected item count")
+          print("SUMMARY updated="+str(updated)+" skipped="+str(skipped)+" total=12")
+          PY
