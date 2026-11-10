@@ -3,11 +3,17 @@
 
 **Ideengeber:** Leo (`@leoburnhard`)  
 **Bereich:** GGP / STREAMEN-Community  
-**Stand:** Öffentliche Ideensammlung, noch kein Entwicklungsauftrag.
+**Stand:** **IN UMSETZUNG – PLANUNG AKTIV (10.11.2026)**. Eine fachliche Entscheidung ist verbindlich dokumentiert; Build, Produktfunktion und Liveabnahme sind dadurch noch nicht bestätigt.
 
 Ein gemeinsamer GGP-Tourkalender könnte unterschiedliche Tourtypen, einzelne Etappen und saisonale Aktionen verständlich darstellen.
 
-## Vorschlag
+## Verbindliche Entscheidung B (10.11.2026)
+
+**Eine GGP-Etappe darf mehreren Touren gleichzeitig zugeordnet werden. Jede Tour bekommt ihre eigene Wertung.** Ein offiziell bestätigtes Etappenergebnis wird dafür nicht doppelt erzeugt; stattdessen kann es je zugeordneter Tour genau einmal zu deren getrennter Wertung beitragen. Eine globale Mehrfachbuchung von km, Punkten oder Siegen ist nicht vorgesehen. Es werden keine zweiten, konkurrierenden Ergebnisdaten erzeugt.
+
+**Offen bleibt:** Ob die Mehrfachzuordnung ausschließlich vor Etappenstart oder auch später geändert werden darf, wie Veranstalter-/Kanalgrenzen gelten und welche Wertungsregeln unterschiedliche Touren verwenden. Das wird schrittweise entschieden. Noch keine automatische Umwertung/Installation.
+
+## Ursprünglicher Vorschlag
 - Tourtypen wie Klassiker, Streamer-Events, IRL-Fahrten oder Zwift-Touren.
 - Kanalübergreifende Touren mit jeweils klar zugeordneten Etappen.
 - Ein Ablauf vom Entwurf über die Prüfung bis zur Veröffentlichung.
@@ -15,7 +21,7 @@ Ein gemeinsamer GGP-Tourkalender könnte unterschiedliche Tourtypen, einzelne Et
 - Kalenderansicht für aktive und geplante Touren, einschließlich bewusster Pausen.
 
 ## Offene Fragen
-Dürfen mehrere Touren gleichzeitig laufen? Wie werden Etappen und Ergebnisse zugeordnet? Was geschieht bei Absagen oder Terminänderungen?
+**Entschieden:** Parallele Touren und Mehrfachzuordnung derselben Etappe sind erlaubt, mit getrennten Tourwertungen. **Weiter offen:** spätere Zuordnungsänderungen sowie Absagen/Terminänderungen.
 
 **Wichtig:** Vorgeschlagene Termine gelten erst nach gesonderter Bestätigung.
 
