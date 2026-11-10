@@ -17,13 +17,21 @@ Ein gemeinsamer GGP-Tourkalender könnte unterschiedliche Tourtypen, einzelne Et
 
 **In Umsetzung heißt hier weiterhin: technische Planung aktiv; nicht gebaut, installiert oder live abgenommen.** Es wurden keine laufenden Tourwertungen geändert.
 
-**Entschieden:** Touren sind für alle Streamer gemeinsam; Etappen verschiedener Streamer können derselben Tour angehören. **Noch offen:** gemeinsames oder streamergetrenntes Tour-Ranking und gegebenenfalls unterschiedliche Tour-Wertungsregeln.
+**Entschieden:** Touren und ihre offiziellen Fahrer-Ranglisten sind für alle Streamer gemeinsam; Etappen verschiedener Streamer gehören zur selben Tourwertung. **Noch offen:** gegebenenfalls unterschiedliche Tour-Wertungsregeln und Bearbeitungsrechte.
 
 ## Verbindliche Entscheidung: Touren sind für alle Streamer gleich (10.11.2026)
 
 **Ein gemeinsamer GGP-Tourkalender und dieselben Touren für alle teilnehmenden Streamer.** Es gibt keine separate Jan-, Leo- oder Gast-Kopie derselben Tour. Etappen verschiedener Streamer können einer gemeinsamen Tour angehören, behalten aber ihre jeweilige veranstaltende Herkunft. Die zuvor beschlossenen Mehrfachzuordnungen (B) und rückwirkenden Korrekturen mit Protokoll und Neuberechnung (C) gelten weiterhin.
 
-**Nächste noch offene Fachfrage:** Führen alle Streamer eine gemeinsame kanalübergreifende Tour-Rangliste oder getrennte Ranglisten innerhalb derselben Tour? Weitere Detailregeln und Berechtigungen werden intern entschieden. Kein fertig getesteter Build.
+**Entschieden A (11.11.2026):** Eine gemeinsame kanalübergreifende Fahrer-Rangliste je Tour; keine eigenen Ranglisten pro Streamer. Nächste Frage: gleiche Wertungsregeln oder tourindividuelle Gewichtung? Weitere Detailregeln und Berechtigungen werden intern entschieden. Kein fertig getesteter Build.
+
+## Verbindliche Entscheidung A – eine gemeinsame Tourwertung (11.11.2026)
+
+**Alle Streamer verwenden eine einzige gemeinsame Fahrer-Rangliste für jede GGP-Tour.** Bestätigte Fahrerbeiträge aus den zugehörigen Jan-, Leo- und weiteren Streamer-Etappen erscheinen im selben Tour-Ranking; es gibt **keine getrennten Jan-/Leo-Tabellen für dieselbe Tour**. Eine verifiziert identische Person erscheint dabei nur einmal, auch wenn sie bei verschiedenen Streamern teilnimmt. Unbestätigt gleichlautende Nutzernamen werden nicht automatisch zusammengelegt.
+
+Die vorigen Beschlüsse bleiben gültig: **B** – eine Etappe darf für mehrere Touren zählen; **C** – auch nach Etappenende darf die Tourzuordnung mit Änderungsprotokoll und Neuberechnung der betroffenen Tourwertungen korrigiert werden; **gemeinsamer Tourkatalog** für alle Streamer. Etappenresultate werden nicht mehrfach erzeugt und globale Punkte/km nicht doppelt gebucht.
+
+**Nächste offene Frage:** Dürfen Touren für dieselbe Etappe unterschiedliche Wertungsregeln anwenden? Interne Rechte und technische Tests stehen ebenfalls noch aus. **Status: IN UMSETZUNG – PLANUNG AKTIV**, ohne Build/Live-Abnahme.
 
 ## Ursprünglicher Vorschlag
 - Tourtypen wie Klassiker, Streamer-Events, IRL-Fahrten oder Zwift-Touren.
@@ -33,7 +41,7 @@ Ein gemeinsamer GGP-Tourkalender könnte unterschiedliche Tourtypen, einzelne Et
 - Kalenderansicht für aktive und geplante Touren, einschließlich bewusster Pausen.
 
 ## Offene Fragen
-**Entschieden B + C:** Parallel laufende Touren und Mehrfachzuordnung sind erlaubt; Zuordnungen dürfen rückwirkend mit Audit und Tourwertungs-Neuberechnung berichtigt werden. **Weiter offen:** Ranglisten-Scope, Absagen und Terminänderungen.
+**Entschieden B + C:** Parallel laufende Touren und Mehrfachzuordnung sind erlaubt; Zuordnungen dürfen rückwirkend mit Audit und Tourwertungs-Neuberechnung berichtigt werden. **Weiter offen:** tourindividuelle Wertungsregeln, Absagen und Terminänderungen.
 
 **Wichtig:** Vorgeschlagene Termine gelten erst nach gesonderter Bestätigung.
 
