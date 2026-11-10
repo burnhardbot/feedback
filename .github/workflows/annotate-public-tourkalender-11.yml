@@ -1,4 +1,4 @@
-name: GGP Idea 11 - Gemeinsames Ranking A fuer alle Streamer
+name: GGP Idea 11 - Bestehende Tourwertungen im Code verifiziert
 
 # Einmalig und idempotent. Kein Build, keine geheimen Links, keine Produktumstellung.
 on:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Confirm shared Tour rankings across all streamers
+      - name: Confirm K8 source inventory, no duplicate features
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPOSITORY: ${{ github.repository }}
@@ -31,7 +31,7 @@ jobs:
               raise RuntimeError("Wrong repository for public idea")
           token = os.environ["GH_TOKEN"]
           api = "https://api.github.com/graphql"
-          marker = "<!-- streamen-tourcalendar-idea11-shared-ranking-a-20261111 -->"
+          marker = "<!-- streamen-tourcalendar-idea11-codefirst-verified-20261111 -->"
 
           query = """
           query($cursor: String) {
@@ -93,27 +93,23 @@ jobs:
               print("Idea #11 already annotated; no duplicate")
           else:
               body = (
-                "**STATUS: IN UMSETZUNG – PLANUNG AKTIV (10.11.2026)**\n\n"
-                "**VERBINDLICH ENTSCHIEDEN A (11.11.2026): EIN GEMEINSAMES "
-                "FAHRER-RANKING PRO GGP-TOUR FUER ALLE STREAMER.** "
-                "Jan, Leo und die weiteren teilnehmenden Streamer teilen je "
-                "gemeinsamer Tour-ID dieselbe Fahrer-Rangliste. Bestaetigte "
-                "Etappenbeitraege aller zugeordneten Streamer fliessen "
-                "in eine Tourwertung ein, keine Jan-/Leo-Ranglistenkopien. "
-                "Dieselbe sicher zugeordnete Person erscheint nur einmal, "
-                "Namensgleichheit alleine darf niemanden zusammenlegen.\n\n"
-                "**Bisherige Beschluesse bleiben:** Gemeinsamer Tourkatalog; "
-                "B – eine Etappe kann mehreren unterschiedlichen Touren "
-                "zugeordnet sein, mit je eigener Tour-Rangliste. "
-                "C – Tourzuordnung auch nach Etappenende durch berechtigte "
-                "Verwaltung mit Aenderungsprotokoll und Neuberechnung "
-                "der betroffenen Tourwertungen korrigieren. Keine doppelte "
-                "offizielle Etappe und keine zusaetzlichen globalen Punkte.\n\n"
-                "**Noch offen:** Muss jede Tour die gleichen Wertungsregeln "
-                "anwenden oder sind unterschiedliche Tour-Gewichtungen moeglich?\n\n"
-                "**Statusgrenze:** Technische Planung ist aufgenommen, "
-                "noch kein neuer Server-Build, keine neue Livefreigabe und keine "
-                "abgeschlossene Realabnahme.\n\n" + marker)
+                "**CODE-FIRST-KLAERUNG (11.11.2026): Bestehende GGP-Funktionen erhalten.**\\n\\n"
+                "Der original gepruefte aktuelle Streamen-Server enthaelt schon "
+                "**gemeinsame GGP-Touren und eine gemeinsame Fahrer-Rangliste fuer alle "
+                "Streamer**, parallele Touren, feste Kilometer-/Sprint-/Berg-/Etappensieg-"
+                "Wertungsregeln und eine gesicherte historische Rueckrechnung beim "
+                "Anlegen einer ganzen Tour. **Dazu braucht es keine neue Abstimmung oder "
+                "zweite Ranking-Engine.**\\n\\n"
+                "**Verbleibender geplanter Unterschied:** Einzelne Etappen gezielt zu "
+                "ausgewaehlten Touren zuordnen statt automatisch zu allen zeitlich "
+                "aktiven Touren; nach Etappenende Zuordnungen mit Aenderungsprotokoll "
+                "korrigieren und die betroffenen gemeinsamen Tourwertungen neu berechnen. "
+                "Die Entscheidungen B, C und gemeinsames Ranking A bleiben bestehen. "
+                "Keine neuen tourindividuellen Gewichtungen erfinden.\\n\\n"
+                "**Status: IN UMSETZUNG – PLANUNG AKTIV**, Bestandscode bestaetigt, "
+                "Erweiterung/Win10-/OBS-/Liveabnahme noch offen; kein Server-Build.\\n\\n"
+                + marker)
+
               result = graphql(mutation, {"id": row["id"], "body": body})
               comment = result["addDiscussionComment"]["comment"]
               if not comment or not comment.get("url"):
