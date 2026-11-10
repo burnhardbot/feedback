@@ -1,0 +1,48 @@
+title: "[IDEE] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        💡 Willkommen in der gemeinsamen STREAMEN-/GGP-Ideenwerkstatt von Leo, Ginger und der Community.
+
+        **Bitte suche zuerst nach ähnlichen Ideas.** Bei einer vorhandenen Idee lieber dort kommentieren, statt eine zweite anzulegen.
+
+        Alles hier ist **öffentlich**: keine internen Screenshots, Geheimnisse, persönlichen Daten, Tokens oder ungefilterten Logs veröffentlichen.
+        Ein Vorschlag ist noch **keine Zusage zur Umsetzung**.
+  - type: textarea
+    id: idea
+    attributes:
+      label: "Was ist deine Idee?"
+      description: "Beschreibe sie kurz in deinen eigenen Worten."
+      placeholder: "Ich fände es gut, wenn ..."
+    validations:
+      required: true
+  - type: textarea
+    id: benefit
+    attributes:
+      label: "Was würde das verbessern?"
+      placeholder: "Dadurch könnten Zuschauer / Fahrer ..."
+    validations:
+      required: false
+  - type: textarea
+    id: details
+    attributes:
+      label: "Beispiele oder weitere Details (optional)"
+      description: "Gerne ergänzen – sensible Daten bitte weglassen."
+    validations:
+      required: false
+  - type: input
+    id: related
+    attributes:
+      label: "Ähnliche vorhandene Diskussion (falls gefunden)"
+      description: "Optional einen Link angeben oder diesen Punkt frei lassen."
+      placeholder: "https://github.com/burnhardbot/feedback/discussions/..."
+    validations:
+      required: false
+  - type: checkboxes
+    id: public
+    attributes:
+      label: "Vor dem Absenden"
+      options:
+        - label: "Ich veröffentliche keine geheimen Zugangsdaten oder privaten Informationen."
+          required: true
