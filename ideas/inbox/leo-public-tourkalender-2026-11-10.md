@@ -37,7 +37,13 @@ Die verbleibende geplante Erweiterung ist vor allem die **bewusst auswählbare Z
 
 Die vorigen Beschlüsse bleiben gültig: **B** – eine Etappe darf für mehrere Touren zählen; **C** – auch nach Etappenende darf die Tourzuordnung mit Änderungsprotokoll und Neuberechnung der betroffenen Tourwertungen korrigiert werden; **gemeinsamer Tourkatalog** für alle Streamer. Etappenresultate werden nicht mehrfach erzeugt und globale Punkte/km nicht doppelt gebucht.
 
-**Nächste offene Frage:** Dürfen Touren für dieselbe Etappe unterschiedliche Wertungsregeln anwenden? Interne Rechte und technische Tests stehen ebenfalls noch aus. **Status: IN UMSETZUNG – PLANUNG AKTIV**, ohne Build/Live-Abnahme.
+**Keine erneute Fachfrage zu Tour-Gewichtungen:** Der Server hat bereits einheitliche Wertungskategorien; diese bleiben bestehen. Die gezielte Etappenzuordnung samt rückwirkender Korrektur ist in Planung. **Status: IN UMSETZUNG – PLANUNG AKTIV**, ohne Build/Live-Abnahme.
+
+## Bestehende Regeln im Server verifiziert (11.11.2026)
+
+Die gemeinsamen GGP-Touren, kanalübergreifenden Fahrer-Ranglisten und zeitgleich aktiven Touren sind **bereits im aktuellen K8-Quellcode vorhanden**. Die bestehenden Wertungskategorien gelten für alle Touren einheitlich: Kilometer als Hauptwertung, vorhandene Sprint-/Bergpunkte und Etappensiege. **Keine neuen Tour-Gewichtungen oder separaten Streamer-Ranglisten erforderlich.** Der Server besitzt außerdem bereits einen geschützten historischen Rückrechnungsmechanismus für die nachträgliche Anlage einer gesamten Tour.
+
+Noch zu ergänzen ist die **gezielte Auswahl, welche Etappe zu welcher Tour gehört**, einschließlich autorisierter Korrektur nach Etappenende mit Änderungsprotokoll und Aktualisierung der betroffenen Tourwertungen. Vorhandene Regeln und Resultate bleiben erhalten; kein neuer Produkt-Build, Live-Test oder Datenwechsel durch diesen Beschluss.
 
 ## Ursprünglicher Vorschlag
 - Tourtypen wie Klassiker, Streamer-Events, IRL-Fahrten oder Zwift-Touren.
