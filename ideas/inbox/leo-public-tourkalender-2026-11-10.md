@@ -17,13 +17,13 @@ Ein gemeinsamer GGP-Tourkalender könnte unterschiedliche Tourtypen, einzelne Et
 
 **In Umsetzung heißt hier weiterhin: technische Planung aktiv; nicht gebaut, installiert oder live abgenommen.** Es wurden keine laufenden Tourwertungen geändert.
 
-**Entschieden:** Touren und ihre offiziellen Fahrer-Ranglisten sind für alle Streamer gemeinsam; Etappen verschiedener Streamer gehören zur selben Tourwertung. **Noch offen:** gegebenenfalls unterschiedliche Tour-Wertungsregeln und Bearbeitungsrechte.
+**Entschieden:** Touren und ihre offiziellen Fahrer-Ranglisten sind für alle Streamer gemeinsam; Etappen verschiedener Streamer gehören zur selben Tourwertung. **Durch Code geklärt:** Bestehende einheitliche Wertungsregeln gelten weiter; Verwaltungszugriff über vorhandene Admin-Anmeldung.
 
 ## Verbindliche Entscheidung: Touren sind für alle Streamer gleich (10.11.2026)
 
 **Ein gemeinsamer GGP-Tourkalender und dieselben Touren für alle teilnehmenden Streamer.** Es gibt keine separate Jan-, Leo- oder Gast-Kopie derselben Tour. Etappen verschiedener Streamer können einer gemeinsamen Tour angehören, behalten aber ihre jeweilige veranstaltende Herkunft. Die zuvor beschlossenen Mehrfachzuordnungen (B) und rückwirkenden Korrekturen mit Protokoll und Neuberechnung (C) gelten weiterhin.
 
-**Entschieden A (11.11.2026):** Eine gemeinsame kanalübergreifende Fahrer-Rangliste je Tour; keine eigenen Ranglisten pro Streamer. Nächste Frage: gleiche Wertungsregeln oder tourindividuelle Gewichtung? Weitere Detailregeln und Berechtigungen werden intern entschieden. Kein fertig getesteter Build.
+**Entschieden A (11.11.2026):** Eine gemeinsame kanalübergreifende Fahrer-Rangliste je Tour; keine eigenen Ranglisten pro Streamer. Die Wertungsregeln sind bereits im Server festgelegt; keine weitere Nutzerentscheidung erforderlich. Vorhandene Admin-Berechtigungen und Tests bleiben technische Prüfaufgaben. Kein fertig getesteter Build.
 
 ## Bereits vorhandener technischer Kern – nachgeprüft (11.11.2026)
 
@@ -53,7 +53,7 @@ Noch zu ergänzen ist die **gezielte Auswahl, welche Etappe zu welcher Tour geh�
 - Kalenderansicht für aktive und geplante Touren, einschließlich bewusster Pausen.
 
 ## Offene Fragen
-**Entschieden B + C:** Parallel laufende Touren und Mehrfachzuordnung sind erlaubt; Zuordnungen dürfen rückwirkend mit Audit und Tourwertungs-Neuberechnung berichtigt werden. **Weiter offen:** tourindividuelle Wertungsregeln, Absagen und Terminänderungen.
+**Entschieden B + C:** Parallel laufende Touren und Mehrfachzuordnung sind erlaubt; Zuordnungen dürfen rückwirkend mit Audit und Tourwertungs-Neuberechnung berichtigt werden. **Bestehender Standard:** einheitliche Wertungsregeln; vorhandene Storno- und Kalenderfunktionen bewahren. Zusätzliche neue Funktionen erst nach einem tatsächlichen neuen Wunsch.
 
 **Wichtig:** Vorgeschlagene Termine gelten erst nach gesonderter Bestätigung.
 
