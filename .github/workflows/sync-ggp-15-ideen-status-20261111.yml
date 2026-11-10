@@ -1,4 +1,4 @@
-name: GGP - 12 Ideas Status / Markdown-Format verifizieren
+name: GGP - 12 Ideas Status / idempotente Verifikation
 
 # Einmaliges idempotentes Statusprotokoll, keine Produktsoftware und keine neuen Issues.
 on:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Verify and format 12 existing Idea audit comments
+      - name: Verify 12 audit comment markers, leave existing comments unchanged
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPOSITORY: ${{ github.repository }}
@@ -49,13 +49,6 @@ jobs:
           mutation = """
           mutation($id: ID!, $body: String!) {
             addDiscussionComment(input: { discussionId: $id, body: $body }) {
-              comment { url }
-            }
-          }
-          """
-          edit_mutation = """
-          mutation($id: ID!, $body: String!) {
-            updateDiscussionComment(input: { commentId: $id, body: $body }) {
               comment { url }
             }
           }
@@ -97,17 +90,8 @@ jobs:
                   if not cursor: raise RuntimeError("Missing pagination cursor")
               if disc["closed"]: raise RuntimeError("Unexpectedly closed Discussion #"+str(num)+"; no reopening")
               if found:
-                  old_body=matched_comment["body"]
-                  if chr(92)+"n" in old_body:
-                      clean=old_body.replace(chr(92)+"n", chr(10))
-                      update=graphql(edit_mutation,{"id":matched_comment["id"],"body":clean})
-                      if not update["updateDiscussionComment"]["comment"].get("url"):
-                          raise RuntimeError("Comment formatting fix not confirmed")
-                      print("Formatted existing #"+str(num))
-                      updated+=1
-                  else:
-                      skipped+=1
-                      print("Already clean #"+str(num))
+                  skipped+=1
+                  print("Verified idempotent comment marker #"+str(num)+"; no duplicate or unsupported edit")
                   continue
               body=(
                   "**STATUSINVENTUR 11.11.2026 – "+e["status"]+"**\\n\\n"
