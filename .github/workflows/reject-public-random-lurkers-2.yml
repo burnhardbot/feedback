@@ -1,0 +1,125 @@
+name: GGP Idea 2 - Zufalls-Lurker verwerfen
+
+# Einmaliger, idempotenter Projektentscheid. Keine Produktcode-/Serveraenderung.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/reject-public-random-lurkers-2.yml'
+
+permissions:
+  contents: read
+  discussions: write
+
+jobs:
+  reject:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Post verified decision and close public Idea 2
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from urllib.request import Request, urlopen
+
+          if os.environ.get("GH_REPOSITORY") != "burnhardbot/feedback":
+              raise RuntimeError("Wrong repository")
+          token = os.environ["GH_TOKEN"]
+          endpoint = "https://api.github.com/graphql"
+          marker = "<!-- streamen-idea2-random-lurkers-rejected-2026-11-10 -->"
+
+          query = """
+          query($cursor: String) {
+            repository(owner: "burnhardbot", name: "feedback") {
+              discussion(number: 2) {
+                id number title url closed category { name }
+                comments(first: 100, after: $cursor) {
+                  nodes { body }
+                  pageInfo { hasNextPage endCursor }
+                }
+              }
+            }
+          }
+          """
+          comment_mutation = """
+          mutation($id: ID!, $body: String!) {
+            addDiscussionComment(input: {discussionId: $id, body: $body}) {
+              comment { url }
+            }
+          }
+          """
+          close_mutation = """
+          mutation($id: ID!) {
+            closeDiscussion(input: {discussionId: $id, reason: OUTDATED}) {
+              discussion { closed url }
+            }
+          }
+          """
+          def graphql(document, variables):
+              request = Request(endpoint,
+                data=json.dumps({"query":document,"variables":variables}).encode("utf-8"),
+                headers={"Authorization":"Bearer "+token,
+                         "Accept":"application/vnd.github+json",
+                         "Content-Type":"application/json",
+                         "User-Agent":"streamen-public-idea2-decision"})
+              with urlopen(request, timeout=30) as response:
+                  result=json.load(response)
+              if result.get("errors"):
+                  raise RuntimeError("GitHub GraphQL error: " + str(result["errors"]))
+              return result["data"]
+
+          cursor=None
+          record=None
+          found=False
+          while True:
+              data=graphql(query,{"cursor":cursor})["repository"]
+              if not data or not data.get("discussion"):
+                  raise RuntimeError("Discussion #2 not found")
+              record=data["discussion"]
+              if record["number"] != 2 or (record["category"]["name"] or "").casefold() != "ideas":
+                  raise RuntimeError("Wrong Discussion/category, refusing changes")
+              found = found or any(marker in (node.get("body") or "")
+                                   for node in record["comments"]["nodes"])
+              page=record["comments"]["pageInfo"]
+              if not page["hasNextPage"]:
+                  break
+              cursor=page["endCursor"]
+              if not cursor:
+                  raise RuntimeError("Missing cursor")
+          if not record["closed"] and not found:
+              body=(
+                "**VERWORFEN – Nutzerentscheidung 10.11.2026:** "
+                "Keine zufaellig erzeugten 5–8 Lurker und keine "
+                "dekorativen Fuellfahrer.\n\n"
+                "Automatischer Peloton-Besatz bei **Etappenstart** und "
+                "**nach dem Ende von Sprint-/Spielphasen** ausschliesslich "
+                "fuer verifizierte **Wattfahrer, Streamer, VIPs, Abonnenten "
+                "und Vortagssieger**. Fehlende berechtigte Fahrer koennen "
+                "wieder eingeblendet werden, ohne Spielanmeldung oder "
+                "Fake-Punkte. Status/LIVE nur aus echten Quellen.\n\n"
+                "Wichtig: Bestehende echte **!lurk**-Funktionen und "
+                "Chat-/Spielteilnahme werden nicht gestrichen; "
+                "nur die neue Zufalls-Lurker-Idee wird verworfen. "
+                "Die zugehoerigen Rollen-/Pelotonfunktionen sind teils "
+                "bereits vorhanden und werden im privaten Serverprojekt "
+                "weiter gepflegt. Keine Produktversion gebaut.\n\n"
+                + marker)
+              result=graphql(comment_mutation,{"id":record["id"],"body":body})
+              print("Comment: "+result["addDiscussionComment"]["comment"]["url"])
+          elif found:
+              print("Decision comment already recorded")
+          elif record["closed"]:
+              raise RuntimeError("Already closed without matching marker; needs manual review")
+          if not record["closed"]:
+              reply=graphql(close_mutation,{"id":record["id"]})["closeDiscussion"]["discussion"]
+              if not reply or not reply.get("closed"):
+                  raise RuntimeError("Discussion not closed")
+              print("Closed rejected public Idea: "+reply["url"])
+          else:
+              print("Already closed: "+record["url"])
+          PY
