@@ -111,6 +111,18 @@ jobs:
               if not note or not note.get("url"): raise RuntimeError("No confirmed comment for #"+str(num))
               print("Updated #"+str(num)+": "+note["url"])
               updated+=1
+          # The three already handled Ideas complete the inventory:
+          # one deliberately rejected and archived; two with active planning tickets.
+          other=json.loads(r'''[{"number":2,"closed":true},{"number":11,"closed":false},{"number":14,"closed":false}]''')
+          for e in other:
+              record=graphql(query,{"number":e["number"],"cursor":None})["repository"]
+              disc=record["discussion"] if record else None
+              if not disc or (disc["category"]["name"] or "").casefold()!="ideas":
+                  raise RuntimeError("Missing or wrong special Ideas #"+str(e["number"]))
+              if disc["closed"] != e["closed"]:
+                  raise RuntimeError("Wrong closure state for special Ideas #"+str(e["number"]))
+              print("SPECIAL VERIFIED #"+str(e["number"])+" closed="+str(disc["closed"]))
+          print("TOTAL VERIFIED 15 = 12 status markers + 2 active + 1 archived/closed")
           if len(entries)!=12: raise RuntimeError("Unexpected item count")
           print("SUMMARY updated="+str(updated)+" skipped="+str(skipped)+" total=12")
           PY
