@@ -1,0 +1,113 @@
+name: GGP Idea 11 - Tourkalender-Entscheidung B dokumentieren
+
+# Einmalig und idempotent. Kein Build, keine geheimen Links, keine Produktumstellung.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/annotate-public-tourkalender-11.yml'
+
+permissions:
+  contents: read
+  discussions: write
+
+jobs:
+  annotate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Confirm target and comment approved decision B
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from urllib.request import Request, urlopen
+
+          if os.environ.get("GH_REPOSITORY") != "burnhardbot/feedback":
+              raise RuntimeError("Wrong repository for public idea")
+          token = os.environ["GH_TOKEN"]
+          api = "https://api.github.com/graphql"
+          marker = "<!-- streamen-tourcalendar-idea11-decision-b-20261110 -->"
+
+          query = """
+          query($cursor: String) {
+            repository(owner: "burnhardbot", name: "feedback") {
+              discussion(number: 11) {
+                id number title closed url category { name }
+                comments(first: 100, after: $cursor) {
+                  nodes { body }
+                  pageInfo { hasNextPage endCursor }
+                }
+              }
+            }
+          }
+          """
+          mutation = """
+          mutation($id: ID!, $body: String!) {
+            addDiscussionComment(input: { discussionId: $id, body: $body }) {
+              comment { url }
+            }
+          }
+          """
+          def graphql(q, args):
+              req = Request(api,
+                 data=json.dumps({"query": q, "variables": args}).encode("utf-8"),
+                 headers={
+                   "Authorization": "Bearer " + token,
+                   "Accept": "application/vnd.github+json",
+                   "Content-Type": "application/json",
+                   "User-Agent": "streamen-tourcalendar-idea11-decision"})
+              with urlopen(req, timeout=30) as res:
+                  answer = json.load(res)
+              if answer.get("errors"):
+                  raise RuntimeError("GraphQL rejected query: " + str(answer["errors"]))
+              return answer["data"]
+
+          cursor = None
+          found = False
+          row = None
+          while True:
+              response = graphql(query, {"cursor": cursor})["repository"]
+              row = response["discussion"] if response else None
+              if not row or row["number"] != 11:
+                  raise RuntimeError("Expected public Discussion #11 missing")
+              if row["closed"]:
+                  raise RuntimeError("Public Discussion #11 is closed; no unsolicited reopen")
+              if (row["category"]["name"] or "").casefold() != "ideas":
+                  raise RuntimeError("Not an Ideas discussion")
+              if "tour" not in row["title"].casefold():
+                  raise RuntimeError("Discussion title does not match Tourkalender: " + row["title"])
+              comments = row["comments"]
+              found = found or any(marker in (c.get("body") or "") for c in comments["nodes"])
+              page = comments["pageInfo"]
+              if not page["hasNextPage"]:
+                  break
+              cursor = page["endCursor"]
+              if not cursor:
+                  raise RuntimeError("Pagination cursor missing")
+          if found:
+              print("Idea #11 already annotated; no duplicate")
+          else:
+              body = (
+                "**STATUS: IN UMSETZUNG – PLANUNG AKTIV (10.11.2026)**\n\n"
+                "**Verbindlich entschieden: Variante B.** "
+                "Eine GGP-Etappe darf mehreren Touren gleichzeitig zugeordnet sein, "
+                "und jede Tour hat ihre **eigene Wertung**. "
+                "Ein offiziell bestaetigtes Etappenergebnis wird dabei nicht mehrfach "
+                "erzeugt; es kann einmal je zugeordneter Tour zu deren getrenntem Ranking "
+                "beitragen, ohne globale Kilometer, Punkte oder Etappensiege zu verdoppeln.\n\n"
+                "**Noch offen:** Darf diese Tour-Zuordnung nach dem Etappenstart geaendert "
+                "werden oder nur davor? Weitere Entscheidungen folgen schrittweise.\n\n"
+                "**Statusgrenze:** Technische Planung ist aufgenommen, "
+                "noch kein neuer Server-Build, keine neue Livefreigabe und keine "
+                "abgeschlossene Realabnahme.\n\n" + marker)
+              result = graphql(mutation, {"id": row["id"], "body": body})
+              comment = result["addDiscussionComment"]["comment"]
+              if not comment or not comment.get("url"):
+                  raise RuntimeError("No comment URL after mutation")
+              print("Updated public Tourkalender Discussion: " + comment["url"])
+          PY
