@@ -1,4 +1,4 @@
-name: GGP Idea 11 - Tourkalender-Entscheidung C dokumentieren
+name: GGP Idea 11 - Gemeinsame Touren fuer alle Streamer
 
 # Einmalig und idempotent. Kein Build, keine geheimen Links, keine Produktumstellung.
 on:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Confirm target and comment approved decision C
+      - name: Confirm shared Tour catalog for all streamers
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPOSITORY: ${{ github.repository }}
@@ -31,7 +31,7 @@ jobs:
               raise RuntimeError("Wrong repository for public idea")
           token = os.environ["GH_TOKEN"]
           api = "https://api.github.com/graphql"
-          marker = "<!-- streamen-tourcalendar-idea11-decision-c-20261110 -->"
+          marker = "<!-- streamen-tourcalendar-idea11-shared-tours-20261110 -->"
 
           query = """
           query($cursor: String) {
@@ -94,19 +94,20 @@ jobs:
           else:
               body = (
                 "**STATUS: IN UMSETZUNG – PLANUNG AKTIV (10.11.2026)**\n\n"
-                "**Verbindlich entschieden: Variante C, zusaetzlich zu B.** "
-                "Etappen duerfen mehreren Touren mit eigenen Rankings angehoeren. "
-                "Ihre Tourzuordnung darf durch berechtigte Verwaltung **auch nach Etappenende "
-                "rueckwirkend korrigiert werden**, also Touren hinzufuegen oder entfernen.\n\n"
-                "**Pflicht:** Jede Korrektur erhaelt ein nachvollziehbares Aenderungsprotokoll "
-                "(wer, wann, vorher/nachher, Revision und Grund). "
-                "Die **betroffenen Tourwertungen** werden entsprechend neu berechnet. "
-                "Die originalen offiziellen Etappenergebnisse bleiben erhalten; "
-                "globale Kilometer, Punkte und Sieger werden nicht doppelt gebucht. "
-                "Korrigierte Rankings und Archivansichten muessen konsistent sein.\n\n"
-                "**Noch offen:** Duerfen Etappen eines Streamers auch einer Tour "
-                "eines anderen Streamers zugeordnet werden? "
-                "Weitere Entscheidungen folgen schrittweise.\n\n"
+                "**VERBINDLICHE PRAEZISIERUNG: TOUREN SIND FUER ALLE STREAMER GLEICH.** "
+                "Jan, Leo und weitere teilnehmende Streamer nutzen denselben gemeinsamen "
+                "GGP-Tourkatalog und dieselbe Tour-ID, keine pro Kanal vervielfachten Touren. "
+                "Etappen koennen ihren veranstaltenden Streamer behalten und dennoch "
+                "einer gemeinsamen Tour zugeordnet sein.\n\n"
+                "**Entscheidungen B und C gelten weiter:** Eine Etappe kann zu mehreren "
+                "Touren gleichzeitig zaehlen, jede Tour wird eigenstaendig ausgewertet. "
+                "Tourzuordnungen duerfen nach Etappenende von berechtigter Verwaltung "
+                "rueckwirkend korrigiert werden; jede Aenderung wird protokolliert "
+                "und die betroffenen Tour-Rankings werden neu berechnet. "
+                "Keine doppelte offizielle Etappe und keine zusaetzlichen globalen Punkte.\n\n"
+                "**Noch zu entscheiden:** Eine gemeinsame Fahrer-Rangliste ueber alle "
+                "Streamer je Tour oder eigene Tour-Ranglisten je Streamer? "
+                "Das wird nicht ohne Fachentscheid angenommen.\n\n"
                 "**Statusgrenze:** Technische Planung ist aufgenommen, "
                 "noch kein neuer Server-Build, keine neue Livefreigabe und keine "
                 "abgeschlossene Realabnahme.\n\n" + marker)
