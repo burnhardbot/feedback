@@ -1,0 +1,110 @@
+name: GGP Idea 14 - Umsetzungsstatus einmalig markieren
+
+# Einmalige, idempotente Kennzeichnung der bestaetigten Idee #14.
+# Keine Aenderung an Minigame/Server/privaten Inhalten.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/annotate-public-vortagssieger-14.yml'
+
+permissions:
+  contents: read
+  discussions: write
+
+jobs:
+  annotate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Post confirmed planning status to public Discussion 14 (idempotent)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from urllib.request import Request, urlopen
+
+          if os.environ.get("GH_REPOSITORY") != "burnhardbot/feedback":
+              raise RuntimeError("Repository scope mismatch")
+          token = os.environ["GH_TOKEN"]
+          endpoint = "https://api.github.com/graphql"
+          marker = "<!-- streamen-idea14-peloton-planning-2026-11-10 -->"
+          query = """
+          query($cursor: String) {
+            repository(owner: "burnhardbot", name: "feedback") {
+              discussion(number: 14) {
+                id
+                url
+                comments(first: 100, after: $cursor) {
+                  nodes { body }
+                  pageInfo { hasNextPage endCursor }
+                }
+              }
+            }
+          }
+          """
+          mutation = """
+          mutation($id: ID!, $body: String!) {
+            addDiscussionComment(input: { discussionId: $id, body: $body }) {
+              comment { url }
+            }
+          }
+          """
+          def call(document, variables):
+              req = Request(endpoint,
+                  data=json.dumps({"query": document, "variables": variables}).encode(),
+                  headers={"Authorization": "Bearer " + token,
+                      "Accept": "application/vnd.github+json",
+                      "Content-Type": "application/json",
+                      "User-Agent": "streamen-public-idea14-status"})
+              with urlopen(req, timeout=30) as r:
+                  reply = json.load(r)
+              if reply.get("errors"):
+                  raise RuntimeError("GitHub GraphQL error: " + str(reply["errors"]))
+              return reply["data"]
+
+          cursor = None
+          discussion_id = None
+          exists = False
+          while True:
+              row = call(query, {"cursor": cursor})["repository"]["discussion"]
+              if not row or not row.get("id"):
+                  raise RuntimeError("Public Discussion #14 missing")
+              discussion_id = row["id"]
+              comments = row["comments"]
+              exists = exists or any(marker in (x.get("body") or "") for x in comments["nodes"])
+              page = comments["pageInfo"]
+              if not page["hasNextPage"]:
+                  break
+              cursor = page["endCursor"]
+              if not cursor:
+                  raise RuntimeError("Missing pagination cursor")
+          if exists:
+              print("Public Discussion #14 already marked, no duplicate comment")
+          else:
+              body = (
+                "**STATUS: IN UMSETZUNG – PLANUNG AKTIV (10.11.2026)**\n\n"
+                "Die Idee wurde zur technischen Umsetzung aufgenommen. Wichtige Klarstellung: "
+                "**Vortagssieger fahren beim Etappenstart sichtbar im Peloton mit, nehmen aber "
+                "NICHT automatisch an !sprint oder anderen Minigames teil.**\n\n"
+                "- Nach einer Sprintwertung werden fehlende Vortagssieger wieder ins "
+                "Fahrerfeld eingeblendet, ohne Sprintanmeldung oder automatische Punkte.\n"
+                "- Ohne Chat-, Twitch- oder Wattaktivitaet fallen sie **langsam zurueck**. "
+                "Bei echter Aktivitaet uebernimmt die normale Fahrerfigur ohne Doppelung.\n"
+                "- Bestaetigte Siegerkennzeichnung und eingefrorene Etappentrikots, "
+                "keine fingierten LIVE-Zustaende.\n\n"
+                "**Stand:** Plan und interne Aufgabenliste vorhanden; **noch kein "
+                "Server-Build, kein Test-PASS und keine Livefreigabe**. "
+                "Diese öffentliche Bestätigung enthält keine privaten Projektlinks.\n\n"
+                + marker
+              )
+              result = call(mutation, {"id": discussion_id, "body": body})
+              comment = result["addDiscussionComment"]["comment"]
+              if not comment or not comment.get("url"):
+                  raise RuntimeError("Missing posted comment URL")
+              print("PUBLIC IDEA MARKED: " + comment["url"])
+          PY
