@@ -25,6 +25,12 @@ Ein gemeinsamer GGP-Tourkalender könnte unterschiedliche Tourtypen, einzelne Et
 
 **Entschieden A (11.11.2026):** Eine gemeinsame kanalübergreifende Fahrer-Rangliste je Tour; keine eigenen Ranglisten pro Streamer. Nächste Frage: gleiche Wertungsregeln oder tourindividuelle Gewichtung? Weitere Detailregeln und Berechtigungen werden intern entschieden. Kein fertig getesteter Build.
 
+## Bereits vorhandener technischer Kern – nachgeprüft (11.11.2026)
+
+Die zentrale Tourverwaltung und **eine gemeinsame Tour-Rangliste für alle Streamer** sind im aktuell geprüften K8-Quellcode **bereits grundsätzlich vorhanden**. Es muss dafür keine zweite Tour-Wertung gebaut werden. Aktuell werden Beiträge zeitbasiert allen gleichzeitig aktiven Touren zugeordnet.
+
+Die verbleibende geplante Erweiterung ist vor allem die **bewusst auswählbare Zuordnung einer bestimmten Etappe zu bestimmten Touren** sowie eine **rückwirkende Korrektur mit Änderungsprotokoll und Neuberechnung**. Quellcodeprüfung ersetzt keine bestandene Live-/Win10-Abnahme. **Status: bestehende Grundlagen implementiert, verbleibende Änderungen IN UMSETZUNG – PLANUNG AKTIV.**
+
 ## Verbindliche Entscheidung A – eine gemeinsame Tourwertung (11.11.2026)
 
 **Alle Streamer verwenden eine einzige gemeinsame Fahrer-Rangliste für jede GGP-Tour.** Bestätigte Fahrerbeiträge aus den zugehörigen Jan-, Leo- und weiteren Streamer-Etappen erscheinen im selben Tour-Ranking; es gibt **keine getrennten Jan-/Leo-Tabellen für dieselbe Tour**. Eine verifiziert identische Person erscheint dabei nur einmal, auch wenn sie bei verschiedenen Streamern teilnimmt. Unbestätigt gleichlautende Nutzernamen werden nicht automatisch zusammengelegt.
