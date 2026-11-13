@@ -11,3 +11,6 @@
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
 .build-picker{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0;color:#c9c5dc}.build-picker select{max-width:100%;min-width:0;padding:9px;border:1px solid #554b76;border-radius:8px;background:#171a2a;color:#eeeaf8}.status-historical{color:#c0b6db;background:#40364e}@media(max-width:700px){.build-picker select{width:100%}}
+
+.tests-panel,.tests-list,.test-card,.test-main,.test-identity,.test-meta,.test-evidence{min-width:0}.test-card,.test-evidence{overflow-wrap:anywhere}.test-evidence a{overflow-wrap:anywhere}
+
