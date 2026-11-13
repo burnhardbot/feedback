@@ -3,7 +3,7 @@
 
 **Ideengeber:** Jan · **Abstimmung:** mit Leo ausstehend  
 **Bereich:** STREAMEN / GGP / offizielle Wertungen  
-**Stand:** Idee mit technischem Umsetzungsvorschlag vom 13.11.2026 · **Kein Build- oder Liveauftrag**
+**Stand:** Idee mit technischem Umsetzungsvorschlag vom 13.11.2026 · **Jans Kilometerregel am 13.11.2026 bestätigt** · **Kein Build- oder Liveauftrag**
 
 ## Kurz erklärt – worum geht es?
 
@@ -11,7 +11,7 @@ In den offiziellen GGP-Ranglisten erscheinen inzwischen viele reine Zuschauer-Ac
 
 **Vorschlag:** Für offizielle Ranglisten wird ein Spieler erst dann berücksichtigt, wenn auf seinem Profil **mindestens einmal mehr als 0 echte Wertungskilometer aus einer gültigen aktiven Spielteilnahme verbucht** wurden. Diese Kilometer werden im System bereits getrennt von passiven Zuschauer-Kilometern erfasst.
 
-Die Freischaltung gilt **einmalig, dauerhaft, spielerbezogen und über alle Streamer/Plattformen hinweg**. Danach darf der Spieler in den jeweiligen Wertungen erscheinen, sofern er dort überhaupt einen Wertungsstand hat. Es wird **keine Mindestmenge außer `> 0`** eingeführt.
+Die Freischaltung gilt **einmalig, dauerhaft, spielerbezogen und über alle Streamer/Plattformen hinweg**. Danach darf der Spieler in den jeweiligen Wertungen erscheinen, sofern er dort überhaupt einen Wertungsstand hat. Es wird **keine Mindestmenge außer `> 0`** eingeführt. **Verbindlicher Beschluss von Jan:** Sobald die erste gültige aktive Teilnahme Wertungskilometer erzeugt, zählen **alle davor und danach gesammelten Kilometer** in der bisherigen Kilometerwertung mit. Beispiel: 850 bisherige Zuschauer-km + 2 neu verdiente Wertungs-km = 852 km in der Kilometerwertung. Eine nachträgliche Umklassifizierung passiver Kilometer in aktive Wertungskilometer findet **nicht** statt; die aktiven Kilometer dienen ausschließlich als Freischaltnachweis.
 
 | Beispiel | Passive Zuschauer-km | Echte Wertungs-km (historisch) | Offizielle Ranglisten |
 |---|---:|---:|---|
@@ -25,7 +25,7 @@ Die Freischaltung gilt **einmalig, dauerhaft, spielerbezogen und über alle Stre
 ## Umfang und beschlossene Grundidee
 
 - **Globales Teilnahme-Kriterium:** Eine historisch gültige, wirklich verbuchte positive Zahl an **aktiven Wertungskilometern** reicht. Passive Zuschauer-km, Chataktivität, ein bloßer Join, Anzeigename oder Anwesenheit reichen nicht.
-- **Dauerhaft und kanalübergreifend:** Eine echte Teilnahme bei Jan oder Leo sowie über Twitch oder YouTube schaltet dasselbe eindeutig identifizierte Spielerprofil frei; keine weitere Teilnahme pro Woche/Etappe/Tour nötig. Bestehende Identitätsverknüpfung nutzen, nicht nach ähnlichen Nicknames zusammenführen.
+- **Dauerhaft und kanalübergreifend:** Eine echte Teilnahme bei Jan oder Leo sowie über Twitch oder YouTube schaltet dasselbe eindeutig identifizierte Spielerprofil frei; keine weitere Teilnahme pro Woche/Etappe/Tour nötig. Ab Freischaltung zählt auch der **gesamte zuvor angesammelte Kilometerstand** nach den unveränderten Wertungsregeln. Bestehende Identitätsverknüpfung nutzen, nicht nach ähnlichen Nicknames zusammenführen.
 - **Betroffene offiziellen Listen:** Tages-, Wochen-, Gesamt-/Jahres-, Kilometer-, Etappen-, Sprint-, Berg- und Tourwertungen (einschließlich Tour-Kilometer, grüne/rote Punkte und Etappensiege/Regenbogen), soweit der jeweilige Wertungsmodus diese darstellt. **Das Kriterium ist global**, die Punkte/Ergebnisse pro Scope bleiben getrennt.
 - **Nicht betroffen:** JOIN/LIVE-Teilnehmerlisten, einzelne tatsächliche Rennergebnisse, Chat- und Zuschauerstatistiken, `!lurk`, Spielablauf, Wertungsformeln, offizielle Buchungen und historische Rohdaten.
 - **Korrekturen respektieren:** Stornierte oder nachträglich zurückgenommene Wertungskilometer dürfen keinen falschen dauerhaften Nachweis hinterlassen. „Dauerhaft“ meint: keine erneute Aktivitätsprüfung pro Zeitraum; eine vollständig annullierte, nie gültige Teilnahme zählt nicht.
@@ -53,9 +53,11 @@ return existingSortRankAndLimit(visible); // existierende Logik weiterverwenden
 
 **Context7-Bedarf:** NEIN für diesen Vorschlag – reine interne Bewertungs-/Anzeigelogik ohne neue oder geänderte externe Bibliotheks-/SDK-APIs. Bei späterer andersartiger Implementierung erneut prüfen.
 
-## Wichtiger Punkt für die Besprechung Jan ↔ Leo
+## Verbindlich von Jan entschieden (13.11.2026) – zur Besprechung mit Leo
 
-**Empfohlener Minimal-Eingriff:** Wir filtern nur die Anzeige und Platzierung; bisherige Zuschauer-Kilometer und Punkte werden **nicht rückwirkend umgerechnet**. Folge: Wer nach langer passiver Zeit erstmals echte Wertungskilometer bekommt, kann danach mit seinem bisherigen regulären Wertungsstand auftauchen. Das ist bewusst die einfachste und rückbaubare Variante. Falls das nicht gewünscht ist, wäre eine zusätzliche Regel „passive Punkte vor erster Aktivteilnahme zählen nicht“ ein **separater, deutlich größerer Eingriff** in die Wertungsberechnung und braucht einen eigenen Beschluss.
+**Alle zuvor gesammelten Kilometer zählen ab der ersten gültigen aktiven Teilnahme mit.** Die erste Teilnahme muss **tatsächlich positive Wertungskilometer** gutschreiben, damit die Freischaltung erfolgt. Beispiel: Ein Zuschauer hat 850 passive Kilometer angesammelt, nimmt erstmals an einem Sprint teil und erhält 2 aktive Wertungskilometer. Er wird sofort sichtbar und hat dann **852 Kilometer in der bisherigen Kilometerwertung**; die 850 alten Kilometer werden weder gelöscht noch nachgebucht. Die vorhandenen Punkte-/Kilometerformeln bleiben unverändert. Es erfolgt **keine Umwandlung der passiven Kilometer in aktive Wertungskilometer**: Nur die echten aktiv verdienten Kilometer sind die Voraussetzung zum Freischalten; sonst würde der Filter sich selbst umgehen.
+
+**Damit ist die frühere offene Variantenfrage entschieden:** Kein Ausschluss der Kilometer oder Punkte vor der ersten Teilnahme, keine rückwirkende Neuberechnung. Leo kann die beschlossene Lösung kommentieren; ein abweichender späterer Wunsch wäre eine neue Entscheidung.
 
 **Grenze:** Das ist ein **Teilnahme- und Sichtbarkeitsfilter, keine garantierte Bot-Erkennung**. Ein Account, der tatsächlich eine gültige aktive Teilnahme samt Wertungskilometern erlangt, erfüllt das Kriterium. Dafür wären gegebenenfalls getrennte Anti-Missbrauchsregeln nötig.
 
@@ -63,6 +65,7 @@ return existingSortRankAndLimit(visible); // existierende Logik weiterverwenden
 
 - [ ] Account mit 1.000 passiven km, **0 aktiven Wertungs-km**: in keiner offiziellen Rangliste, Rohdaten unverändert.
 - [ ] Nach erstem gültigen Wertungs-km-Eintrag `> 0`: automatisch sichtbar, ohne Neustart/manuelle Freigabe.
+- [ ] Rückwirkender Kilometerstand: 850 zuvor gesammelte passive km + 2 erstmals aktiv verdiente Wertungs-km = **852 km in der unveränderten Kilometerwertung**, ohne Rückbuchung/Umklassifizierung.
 - [ ] Echte Teilnahme mit **0** gutgeschriebenen aktiven km: noch nicht freigeschaltet.
 - [ ] Einmalige Teilnahme bei Leo → dasselbe verifizierte Profil bei Jan und in gemeinsamen Tour-Rankings berechtigt; keine doppelte Person.
 - [ ] Tages-/Wochenwechsel, neues Jahr/Season, parallele Touren und historische Archive: globale Berechtigung bleibt, die **pro Liste** gültigen Scores bleiben korrekt getrennt.
@@ -74,6 +77,6 @@ return existingSortRankAndLimit(visible); // existierende Logik weiterverwenden
 
 ## Status und Schutzgrenzen
 
-**[OFFEN – ZUR DISKUSSION MIT LEO]**. Dieser Vorschlag erlaubt **keinen automatischen Build, Commit in Serverquellen, Release, Win10-/OBS-/Twitch-Eingriff, Reset oder Produktiv-Neuberechnung**. Umsetzung erst nach Jans ausdrücklichem Auftrag und geltenden Projektprüfungen.
+**[OFFEN – JANS KILOMETERREGEL BESCHLOSSEN, MIT LEO ZU BESPRECHEN]**. Dieser Vorschlag erlaubt **keinen automatischen Build, Commit in Serverquellen, Release, Win10-/OBS-/Twitch-Eingriff, Reset oder Produktiv-Neuberechnung**. Umsetzung erst nach Jans ausdrücklichem Auftrag und geltenden Projektprüfungen.
 
 Öffentliche Beschreibung ohne geheime Zugangsdaten, private Dateien oder Produktivdetails. Diese Idee wird erst nach echter Umsetzung und überprüfter Abnahme als erledigt behandelt.
