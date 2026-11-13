@@ -101,6 +101,19 @@ def publish(github: GitHub, manifest: dict) -> list[str]:
     if old_changelog is not None and old_changelog[0] != new_changelog:
         raise ValueError("existing changelog differs: do not overwrite published history")
 
+    registry_path = "docs/updates/build-registry.json"
+    old_registry = github.file(registry_path) if info.get("package_sha256") else None
+    registry_content = None
+    if info.get("package_sha256"):
+        registry = json.loads(old_registry[0]) if old_registry else {"schema":1,"builds":[]}
+        if registry.get("schema") != 1 or not isinstance(registry.get("builds"),list):
+            raise ValueError("invalid build registry")
+        matching = [b for b in registry["builds"] if b["version"]==info["version"] and b["buildId"]==info["build_id"]]
+        if matching and (len(matching)!=1 or matching[0]["packageSha256"]!=info["package_sha256"]):
+            raise ValueError("immutable build/package collision")
+        if not matching:
+            registry["builds"].insert(0,{"version":info["version"],"buildId":info["build_id"],"packageSha256":info["package_sha256"],"status":"prepared"})
+            registry_content=json.dumps(registry,ensure_ascii=False,indent=2)+"\n"
     changes = []
     if old_changelog is None:
         github.put_file(changelog_path, new_changelog, f"docs: prepared changelog {info['version']}")
@@ -122,6 +135,9 @@ def publish(github: GitHub, manifest: dict) -> list[str]:
             old_index[1],
         )
         changes.append("release index updated")
+    if registry_content is not None:
+        github.put_file(registry_path,registry_content,"docs: exact prepared build/package registry",old_registry[1] if old_registry else None)
+        changes.append("exact build registered")
     return changes
 
 
@@ -134,6 +150,8 @@ def main() -> None:
     if path.parent != expected or not path.name.endswith(".json"):
         parser.error("use a checked-in path under docs/updates/manifests/")
     info = validate_manifest(json.loads(path.read_text(encoding="utf-8")))
+    if not info.get("package_sha256"):
+        parser.error("new public publication requires the actual package SHA256")
     if path.stem != info["version"]:
         parser.error("manifest filename must equal its version")
     if os.environ.get("GITHUB_REPOSITORY") != REPO:

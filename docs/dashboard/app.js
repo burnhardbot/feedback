@@ -8,7 +8,7 @@
   const ISSUE_COMMENT_URL = ISSUE_URL + '#new_comment_field';
   const UPDATE_DIR = 'https://github.com/' + REPO + '/tree/main/docs/updates';
   const DEFAULT_TESTERS = ['laberfeuer'];
-  const STATE_LABELS = { open: 'OFFEN', done: 'BESTANDEN', fail: 'FEHLER', blocked: 'BLOCKIERT' };
+  const STATE_LABELS = { open: 'OFFEN', done: 'BESTANDEN', fail: 'FEHLER', blocked: 'BLOCKIERT', historical: 'HISTORISCH BESTANDEN' };
 
   function parseTests(markdown) {
     if (typeof markdown !== 'string') throw new TypeError('Testliste muss Text sein');
@@ -35,7 +35,10 @@
     if (!comment || typeof comment.body !== 'string') return null;
     const match = /(?:^|\n)\s*(?:\/test\s+)?(T\d{2,4})\s+(PASS|FAIL|BLOCKIERT)\b(?:\s+(v\d+\.\d+(?:\.\d+)?(?:-[A-Za-z0-9.-]+)?))?/i.exec(comment.body);
     if (!match) return null;
+    const binding=/\bbuild:([A-Za-z0-9._-]{3,120})\s+sha256:([a-f0-9]{64})(?=\s|$)/.exec(comment.body);
+    const boundEligible=!!(binding&&/^\/test\s+T\d{2,4}\s+(?:PASS|FAIL|BLOCKIERT)\s+v[0-9]+\.[0-9]+(?:\.[0-9]+)?(?:-[A-Za-z0-9.-]+)?(?=\s|$)/i.test(comment.body.trim())&&comment.body.includes(' – ')&&comment.body.split(' – ').slice(1).join(' – ').trim().length>=12&&!/\[(?:Name|Datum|Gerät\/OBS|Beschreibung\/Grund)\]/i.test(comment.body));
     return {
+      buildId:binding?.[1]||null,packageSha256:binding?.[2]||null,boundEligible,
       id: match[1].toUpperCase(), status: match[2].toUpperCase(), version: match[3] || null,
       date: comment.created_at || '', author: (comment.user && comment.user.login) || 'GitHub',
       excerpt: comment.body.replace(/\s+/g, ' ').slice(0, 230), url: comment.html_url || ISSUE_URL,
@@ -55,7 +58,7 @@
     return latest;
   }
 
-  function withReports(tests, comments, allowedLogins = DEFAULT_TESTERS) {
+  function withReports(tests, comments, allowedLogins = DEFAULT_TESTERS, targetBuild = undefined) {
     const statuses = latestReports(comments, allowedLogins);
     return tests.map(test => {
       const report = statuses.get(test.id) || null;
@@ -63,6 +66,11 @@
       if (report && report.status === 'FAIL') status = 'fail';
       if (report && report.status === 'BLOCKIERT') status = 'blocked';
       // PASS comments by themselves are not an actual checkmark or an approved deployment.
+      if(targetBuild!==undefined){
+        const exact=!!(targetBuild&&report?.boundEligible&&report.version===targetBuild.version&&report.buildId===targetBuild.buildId&&report.packageSha256===targetBuild.packageSha256);
+        if(test.checked)status=exact&&report.status==='PASS'?'done':'historical';
+        else status=exact&&report.status==='FAIL'?'fail':exact&&report.status==='BLOCKIERT'?'blocked':'open';
+      }
       return { ...test, status, report };
     });
   }
@@ -178,7 +186,7 @@
     return card;
   }
 
-  let state = { tests: [], releases: [], issues: [], version: 'v1.3', commentsComplete: true, loaded: false };
+  let state = { syncStatus:{configured:false,items:[]},targetBuild:null,builds:[],rawTests:[],comments:[],allowed:DEFAULT_TESTERS,tests: [], releases: [], issues: [], version: 'v1.3', commentsComplete: true, loaded: false };
 
   function filteredTests() {
     const query = document.getElementById('searchInput').value.trim().toLocaleLowerCase('de');
@@ -275,6 +283,8 @@
       row.href = safeUrl(issue.html_url); row.target = '_blank'; row.rel = 'noopener noreferrer';
       const body = el('span', 'bug-body');
       body.append(el('strong', '', issue.title || 'Öffentliches Issue'), el('small', '', '#' + issue.number + ' · ' + (issue.state === 'open' ? 'Offen' : 'Geschlossen')));
+      const sync=state.syncStatus.items.find(x=>x.publicIssueNumber===issue.number),labels={SYNCED:'Synchronisiert',SYNC_PENDING:'Synchronisierung ausstehend',SYNC_FAILED:'Synchronisierung fehlgeschlagen',SYNC_UNKNOWN:'Synchronisierung unbestätigt'};
+      body.append(el('small','',state.syncStatus.configured?(labels[sync?.state]||'Synchronisierung ausstehend'):'Synchronisierung noch nicht eingerichtet'));
       row.append(el('span', 'bug-icon', '!'), body, el('span', 'bug-arrow', '↗'));
       container.append(row);
     }
@@ -288,11 +298,12 @@
   }
 
   function showReportDialog(test, status) {
+    if(!state.targetBuild){toast('Zuerst ein tatsächlich registriertes Prüfpaket wählen.');return;}
     const dialog = document.getElementById('reportDialog');
     document.getElementById('dialogTitle').textContent = test.id + ' – ' + (status === 'PASS' ? 'Funktioniert' : status === 'FAIL' ? 'Fehler melden' : 'Blockiert');
     document.getElementById('dialogInfo').textContent = test.title + ' · Tatsächliche Version und Prüfbeleg ergänzen. GitHub übernimmt die Identitätsprüfung.';
     const suffix = status === 'PASS' ? ' – geprüft von [Name], [Datum], [Gerät/OBS]' : ' – [Beschreibung/Grund], [Datum], [Gerät/OBS]';
-    document.getElementById('reportCommand').value = '/test ' + test.id + ' ' + status + ' ' + state.version + suffix;
+    document.getElementById('reportCommand').value = '/test ' + test.id + ' ' + status + ' ' + state.targetBuild.version + ' build:' + state.targetBuild.buildId + ' sha256:' + state.targetBuild.packageSha256 + suffix;
     document.getElementById('openComment').href = ISSUE_COMMENT_URL;
     document.getElementById('dialogHint').textContent = 'Nur freigeschaltete GitHub-Tester können den Haken per Kommentarautomatik ändern. Vorher bleibt der Status offen. Screenshots direkt im GitHub-Kommentar anhängen.';
     if (typeof dialog.showModal === 'function') dialog.showModal();
@@ -325,16 +336,27 @@
       fetchComments(),
       githubJson('/contents/docs/updates'),
       githubJson('/issues?state=open&per_page=100'),
-      githubJson('/contents/docs/updates/tester-roles.json')
+      githubJson('/contents/docs/updates/tester-roles.json'),
+      githubJson('/contents/docs/updates/build-registry.json'),
+      githubJson('/contents/docs/updates/sync-status.json')
     ]);
     refresh.disabled = false;
-    const [issueResult, commentsResult, releasesResult, bugsResult, rolesResult] = results;
+    const [issueResult, commentsResult, releasesResult, bugsResult, rolesResult, buildsResult, syncResult] = results;
+    try{const feed=JSON.parse(decodeGithubText(syncResult.value.data));state.syncStatus=feed.schema===1&&Array.isArray(feed.items)?feed:{configured:false,items:[]};}catch{state.syncStatus={configured:false,items:[]};}
+    try{
+      const registry=JSON.parse(decodeGithubText(buildsResult.value.data));
+      state.builds=registry.schema===1&&Array.isArray(registry.builds)?registry.builds.filter(x=>/^v\d+\.\d+(?:\.\d+)?(?:-[A-Za-z0-9.-]+)?$/.test(x.version)&&/^[A-Za-z0-9._-]{3,120}$/.test(x.buildId)&&/^[a-f0-9]{64}$/.test(x.packageSha256)&&['prepared','installed','rolled-back'].includes(x.status)):[];
+    }catch{state.builds=[];}
+    state.targetBuild=state.builds.find(x=>x.buildId===state.targetBuild?.buildId&&x.packageSha256===state.targetBuild?.packageSha256)||state.builds[0]||null;
+    const select=document.getElementById('buildSelect');select.replaceChildren(new Option('Prüfpaket wählen',''));
+    state.builds.forEach((b,i)=>select.add(new Option(b.version+' · '+b.buildId+' · '+b.packageSha256.slice(0,12)+' · '+b.status,String(i))));select.value=state.targetBuild?String(state.builds.indexOf(state.targetBuild)):'';
+
     if (issueResult.status === 'fulfilled') {
       try {
         const tests = parseTests(issueResult.value.data.body || '');
         const commentData = commentsResult.status === 'fulfilled' ? commentsResult.value : { comments: [], complete: false };
         const allowed = rolesResult.status === 'fulfilled' ? extractTesters(rolesResult.value.data) : DEFAULT_TESTERS;
-        state.tests = withReports(tests, commentData.complete ? commentData.comments : [], allowed);
+        state.rawTests=tests;state.comments=commentData.complete?commentData.comments:[];state.allowed=allowed;state.tests = withReports(tests,state.comments,allowed,state.targetBuild);
         state.commentsComplete = commentData.complete;
         state.loaded = true;
         renderAreas(); renderTests();
@@ -365,6 +387,8 @@
 
   function init() {
     document.getElementById('refreshButton').addEventListener('click', loadData);
+    document.getElementById('buildSelect').addEventListener('change',e=>{state.targetBuild=state.builds[Number(e.target.value)]||null;if(e.target.value==='')state.targetBuild=null;state.tests=withReports(state.rawTests,state.comments,state.allowed,state.targetBuild);renderTests();renderStats();});
+    document.getElementById('statusFilter').add(new Option('Historisch bestanden','historical'));
     for (const id of ['searchInput', 'statusFilter', 'areaFilter']) document.getElementById(id).addEventListener(id === 'searchInput' ? 'input' : 'change', renderTests);
     document.getElementById('copyCommand').addEventListener('click', copyReport);
     for (const link of document.querySelectorAll('.nav-link')) {

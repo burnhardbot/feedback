@@ -34,7 +34,7 @@ def parse_command(body: str) -> dict[str, str] | None:
         return None
     detail = match.group(4).strip()
     # No empty or unreplaced dashboard placeholders as "confirmed" evidence.
-    if len(detail) < 12 or "[" in detail or "]" in detail:
+    if len(detail) < 12 or re.search(r"\[(?:Name|Datum|Gerät/OBS|Beschreibung/Grund)\]", detail, re.IGNORECASE):
         return None
     return {
         "id": match.group(1).upper(),

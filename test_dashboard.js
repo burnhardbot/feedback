@@ -79,3 +79,15 @@ test('plain comment report can still be read', () => {
   const parsed = parseReport({ id: 22, body: 'T01 BLOCKIERT – kein Livestream', user: { login: 'Jan' }, created_at: '2026-11-13T12:00:00Z' });
   assert.equal(parsed.status, 'BLOCKIERT');
 });
+
+test('exact build separates historical PASS and preserves unchecked results', () => {
+  const target={version:'v1.2.46',buildId:'fixture-build',packageSha256:'a'.repeat(64)};
+  const rows=[{id:'T01',checked:true},{id:'T02',checked:false}];
+  const body=id=>'/test '+id+' PASS v1.2.46 build:fixture-build sha256:'+'a'.repeat(64)+' – OBS auf dem Testgerät geprüft';
+  const report=id=>({id:100,body:body(id),user:{login:'laberfeuer'},created_at:'2026-11-13T00:00:00Z'});
+  assert.equal(withReports(rows,[],['laberfeuer'],target)[0].status,'historical');
+  assert.equal(withReports(rows,[report('T01')],['laberfeuer'],target)[0].status,'done');
+  assert.equal(withReports(rows,[report('T02')],['laberfeuer'],target)[1].status,'open');
+  assert.equal(withReports(rows,[{...report('T01'),body:body('T01').replace('a'.repeat(64),'b'.repeat(64))}],['laberfeuer'],target)[0].status,'historical');
+  assert.equal(withReports(rows,[{...report('T01'),body:body('T01').replace('/test ','')}],['laberfeuer'],target)[0].status,'historical');
+});

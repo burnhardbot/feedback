@@ -35,3 +35,12 @@ Die öffentliche Streamen-Weboberfläche wird direkt aus dem GitHub-Repository `
 - Die manuelle Testliste ist **fortlaufend**: Auch nach 100 neuen Updates bleiben alle früheren noch offenen Tests sichtbar. Bei einer neuen Regression wird ein neuer Testfall angehängt, der alte historische PASS bleibt unverändert.
 
 **Tests:** `node --test test_dashboard.js` und `python -m unittest discover -s tools/updates -p 'test_*.py' -v` aus dem Repository-Root.
+
+
+## Ergänzung: genaue Pakete und erhaltene Historie
+
+Neue Ergebnisse verwenden einen Eintrag aus `docs/updates/build-registry.json`: Version, Build-ID und tatsächliche Paket-SHA256. Der gewählte Eintrag wird in den vorbereiteten GitHub-Kommentar übernommen. Ohne registriertes Paket wird kein neuer PASS behauptet. Beispielsyntax: `/test T03 PASS v1.2.46 build:BEISPIEL-BUILD sha256:EXAKTE-64STELLIGE-PAKETSUMME – tatsächliche Beobachtung`. Die Platzhalter sind kein ausführbarer Prüfnachweis.
+
+Die Kommentar-Action ruft `bound_tests.py` auf. Ein neuer Fehler nach PASS erhält eine neue T-ID; ein noch offener derselben Regression bleibt derselbe Fall. Frühere PASS werden für ein anderes Paket als „historisch bestanden“ angezeigt. GitHub-Bildanhänge bleiben erhalten. Nur die verifizierte Allowlist darf Ergebnisse einreichen; damit entstehen keine Code- oder Deployrechte.
+
+`sync-status.json` enthält ausschließlich öffentliche Issue-Nummern und einen begrenzten Synchronisierungsstatus. Private technische Zuordnungen, Inhalte und Tokens bleiben außerhalb dieses Repositories. Anfangszustand ist ausdrücklich **nicht eingerichtet**, bis der private Adapter real verbunden und geprüft wurde. Diese Dateien aktivieren keine Workflows, Pages oder Serverinstallation durch bloßes Vorhandensein in einem Draft-Branch.

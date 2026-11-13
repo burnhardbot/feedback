@@ -33,6 +33,8 @@ def _public_text(value: Any, name: str, limit: int = 500) -> str:
         raise ValueError(f"unsafe Markdown in {name}")
     if "github.com/burnhardbot/stream" in value.lower():
         raise ValueError(f"private issue link in {name}")
+    if re.search(r"(?:https?://|\b(?:localhost|[a-z0-9.-]+\.ts\.net)\b|[A-Za-z]:[\\/]|\b(?:10|127|192\.168|100\.(?:6[4-9]|[7-9][0-9]|1[01][0-9]|12[0-7]))\.\d|#[0-9]+|(?:webhook|token|secret)\s*[:=])", value, re.IGNORECASE):
+        raise ValueError(f"private infrastructure or secret-like text in {name}")
     return value
 
 
@@ -71,7 +73,13 @@ def validate_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
                 ),
             }
         )
+    if not re.fullmatch(r"[A-Za-z0-9._-]{3,120}", build_id):
+        raise ValueError("invalid build ID")
+    package = manifest.get("package_sha256")
+    if package is not None and (not isinstance(package,str) or not re.fullmatch(r"[a-f0-9]{64}",package)):
+        raise ValueError("invalid package SHA256")
     return {
+        **({"package_sha256":package} if package is not None else {}),
         "version": version,
         "build_id": build_id,
         "status": status,
@@ -157,6 +165,8 @@ def render_changelog(manifest: dict[str, Any], checklist_url: str) -> str:
         "## Änderungen",
         "",
     ]
+    if manifest.get("package_sha256"):
+        lines.insert(lines.index("## Änderungen"), "**Paket-SHA256:** " + manifest["package_sha256"])
     lines.extend(f"- {change}" for change in manifest["changes"])
     lines.extend(["", "## Neu vorgesehene manuelle Prüfpunkte", ""])
     lines.extend(
