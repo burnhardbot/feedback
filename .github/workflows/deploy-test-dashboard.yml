@@ -36,6 +36,8 @@ jobs:
       - name: Test public dashboard logic
         run: node --test test_dashboard.js
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: './docs'
