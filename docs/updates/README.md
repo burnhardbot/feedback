@@ -27,3 +27,10 @@ Hier findet ihr die kurzen öffentlichen Changelogs je Version und **genau eine 
 - [Hinweise zur automatischen Veröffentlichung](AUTOMATISIERUNG.md) – Ablauf und Sicherheitsgrenzen für geprüfte Release-Manifeste.
 
 Die Manifeste und die GitHub-Action veröffentlichen nur als **vorbereitet** gekennzeichnete Informationen. Eine Releasefreigabe, Serverinstallation, private Issues-Synchronisierung oder ein manueller Test-PASS werden damit **nicht** erzeugt.
+
+## Streamen Test Center – GitHub Pages
+
+- [Weboberfläche, Bedienung und Sicherheitsmodell](../dashboard/README.md) – im [DRAFT-PR #17](https://github.com/burnhardbot/feedback/pull/17) vorbereitet; **GitHub Pages erst nach erfolgreichem Deployment öffentlich erreichbar**.
+- Die Webseite liest dieselbe fortlaufende [Testliste #16](https://github.com/burnhardbot/feedback/issues/16). Filter nach offen, bestanden, Fehlern, Blockiert und Bereich; Changelogs werden getrennt angezeigt.
+- **Status-Meldung nach Aktivierung:** Jan kann im GitHub-Issue einen echten Test z. B. mit `/test T03 PASS v1.3.1 – Jan, 13.11.2026, OBS, geprüft` kommentieren. Der abgesicherte `issue_comment`-Workflow setzt dann genau diesen Haken. FAIL/BLOCKIERT lässt den Test offen. Screenshots werden im GitHub-Kommentar hochgeladen. Zunächst nur GitHub-Login `laberfeuer` berechtigt; Leos echter GitHub-Username ist noch nachzutragen.
+- Es gibt **keine anonymen Schreibrechte** und keine gespeicherten GitHub-Tokens im Browser. Eigene Ein-Klick-Schreibaktionen ohne GitHub-Kommentar benötigen später eine eigenständige, gesichert zu authentifizierende Backend-Anbindung.
