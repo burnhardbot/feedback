@@ -63,3 +63,11 @@ Die bestehende Ideas-Discussion-Spiegelung ist **keine** allgemeine Bugs-/Test-E
 - Innerhalb des Workflows laufen vor jedem Publizieren die Python-Unittests. Bei Fehler keine serverseitige Aktion. Eine Changelog-Kollision wird vor Änderungen erkannt; ein unterbrochener Publikationslauf kann mit denselben Daten erneut gestartet werden.
 - Für die zeitgleiche manuelle Bearbeitung der Issue #16 während der sehr kurzen Publikation gibt es ohne transaktionelles GitHub-Issue-API **keine absolute Konkurrenzsperre**. Deshalb vor dem Ausführen kurz sicherstellen, dass gerade niemand Checkboxen bearbeitet, und danach die Häkchen prüfen. Datiertes Kommentarprotokoll bleibt als Nachweis bestehen.
 - Die Builder-/Updater-Phasenregel im privaten Repo bleibt bis zur **gesonderten Bestätigung** nur Entwurf; diese öffentliche Dokumentationsautomatik autorisiert keinen produktiven Servereingriff.
+
+## Ergänzung: GitHub-Pages-Testoberfläche und Kommentar-Automatik (Entwurf 13.11.2026)
+
+Im [öffentlichen DRAFT-PR #17](https://github.com/burnhardbot/feedback/pull/17) liegen zusätzlich eine responsive GitHub-Pages-Weboberfläche, die ausschließlich öffentliche Daten aus Issue #16 und den Changelog-Dateien liest, sowie die serverunabhängige GitHub-Action für manuelle Kommentare mit `/test Txx PASS|FAIL|BLOCKIERT v...`.
+
+**Rollen:** zunächst nur verifizierter GitHub-Benutzer `laberfeuer` in `docs/updates/tester-roles.json`. Nach Bestätigung von Leos GitHub-Login darf dieser als Tester ergänzt werden – ohne Build-, Quellcode- oder Updaterrechte. Anonyme Besucher können nur lesen. Kommentare/Bildanhänge bleiben im öffentlichen GitHub-Issue. **Kein Token in der statischen Webseite.**
+
+**Status:** GitHub-PR-Entwurf, noch nicht gemergt und noch keine bestätigte öffentliche Pages-URL; keine Win10-Änderungen. GitHub Pages kann die notwendige Source-Einstellung ggf. erst nach Freigabe konfigurieren. Die private Issue-Synchronisierung und eine echte Ein-Klick-OAuth-Schreiboberfläche bleiben separate Arbeitspakete.
