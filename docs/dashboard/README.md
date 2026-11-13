@@ -14,7 +14,7 @@ Die öffentliche Streamen-Weboberfläche wird direkt aus dem GitHub-Repository `
 ## Veröffentlichungsweg
 
 1. GitHub-Branch mit `docs/index.html`, `docs/dashboard/` und `.github/workflows/deploy-test-dashboard.yml` von Jan prüfen und nach `main` mergen.
-2. Im öffentlichen Repository **Settings → Pages → Build and deployment → GitHub Actions** als Quelle auswählen, falls Pages noch nicht eingerichtet ist. Die GitHub-App-Verbindung hat unter Umständen keine Berechtigung, diese Repository-Einstellung vorzunehmen.
+2. Der `actions/configure-pages@v5`-Schritt versucht mit `enablement: true`, Pages direkt beim ersten Lauf einzurichten. Falls GitHub die nötigen Repositoryrechte dafür nicht freigibt, im öffentlichen Repository **Settings → Pages → Build and deployment → GitHub Actions** als Quelle auswählen.
 3. Den Workflow **Deploy Streamen Test Center to GitHub Pages** nach Aktivierung einmal ausführen und den tatsächlich ausgegebenen URL kontrollieren. **Vor erfolgreichem Lauf keinen erfundenen Pages-Link als live ausgeben.**
 4. Bei Frontend-Updates wird bei relevantem `main`-Commit automatisch neu veröffentlicht. Neue GitHub-Tests und Kommentare erscheinen ohne neue Server-/Webseiten-Version beim nächsten Abruf (manuelles Refresh oder alle fünf Minuten im offenen Tab).
 
