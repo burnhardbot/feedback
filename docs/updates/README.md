@@ -17,3 +17,10 @@ Hier findet ihr die knappen öffentlichen Änderungslisten und die zugehörigen 
 **Noch nicht automatisiert:** Testergebnis-Synchronisierung ins private Code-Repo, automatische Erstellung des Changelogs aus Releases, ein separates Ein-Klick-Testdashboard ohne GitHub-Bearbeitungsoberfläche. GitHub-Kommentare/Screenshots sind bereits nutzbar, das automatische Spiegeln wird separat abgesichert. Niemand darf eine private Issue-Nummer oder vertrauliche Daten öffentlich kopieren.
 
 **Öffentlich lesen; Änderungen nur nach GitHub-Anmeldung und passenden Rechten.** Testhäkchen sind keine Freigabe zum Programmieren oder Deployen.
+
+## Vorlagen für weitere Versionen
+
+- [Changelog-Vorlage](CHANGELOG-TEMPLATE.md) – für jeden tatsächlichen Release eine eigene öffentliche Versionsdatei erstellen.
+- [GitHub-Issue-Vorlage „Manuelle Release-Testliste“](https://github.com/burnhardbot/feedback/issues/new?template=release_testlist.md) – zunächst eine Kopie pro freigegebenem Release; nur wirklich manuell offene Tests eintragen.
+
+Diese Vorlagen erzeugen **noch keine automatische Synchronisierung** und keine automatische Releasefreigabe. Die späteren Codex-/GitHub-Actions-Bausteine übernehmen diesen wiederholbaren Ablauf erst nach separater Prüfung.
