@@ -107,6 +107,14 @@ def merge_continuous_checklist(issue_body: str, manifest: dict[str, Any]) -> str
         if ident in old:
             if old[ident][0] != title:
                 raise ValueError(f"{ident} already means something else; choose a new ID")
+            # The same ID may only be supplied again by an idempotent retry
+            # of its original publication, never as a fresh regression test.
+            original = (
+                f"**{ident} – {title}**: {test['description']} "
+                f"_(hinzugefügt für {manifest['version']})_"
+            )
+            if original not in issue_body:
+                raise ValueError(f"{ident} is already allocated; use a new test ID")
             continue
         additions.append(
             f"- [ ] **{ident} – {title}**: {test['description']} "
@@ -150,6 +158,13 @@ def render_changelog(manifest: dict[str, Any], checklist_url: str) -> str:
         "",
     ]
     lines.extend(f"- {change}" for change in manifest["changes"])
+    lines.extend(["", "## Neu vorgesehene manuelle Prüfpunkte", ""])
+    lines.extend(
+        f"- {test['id']} – {test['title']}: {test['description']}"
+        for test in manifest["manual_tests"]
+    )
+    if not manifest["manual_tests"]:
+        lines.append("- Keine neuen Prüfpunkte; bisher offene Tests bleiben offen.")
     lines.extend(
         [
             "",
