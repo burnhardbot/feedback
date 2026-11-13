@@ -1,0 +1,4 @@
+{
+  "authorized_testers": ["laberfeuer"],
+  "notes": "Only verified GitHub usernames. Add Leo's own username only after Jan verifies it. This allowlist grants test-result permissions, never coding or deployment rights."
+}
