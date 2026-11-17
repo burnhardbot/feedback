@@ -24,9 +24,11 @@
 | Prüfung | Ergebnis |
 | --- | --- |
 | Automatische Prüfungen | PASS / FAIL / NOT RUN |
-| Manuelle Abnahme | [Öffentliche Testliste](LINK_ZUR_TESTLISTE) |
+| Manuelle Abnahme | [Öffentliche Testliste](https://github.com/burnhardbot/feedback/issues/16) |
 | Installation / Healthcheck | PASS / FAIL / NOT RUN |
 
 ---
 
 **Datenschutz:** Nur öffentlich unbedenkliche Informationen. Keine privaten Issues/Commits/Serveradressen/Secrets/Logs. Ein veröffentlichter Codefix ist nicht automatisch ein bestandener Live-/OBS-/Twitch-Test.
+
+**Fortlaufende Tests:** Alle Versionen zeigen auf [dieselbe Testliste #16](https://github.com/burnhardbot/feedback/issues/16). Unerledigte Tests aus älteren Versionen bleiben offen; ein neuer Release setzt keinen Haken zurück und bestätigt keinen älteren PASS erneut.

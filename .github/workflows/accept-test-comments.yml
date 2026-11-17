@@ -1,0 +1,34 @@
+name: Accept authorized manual test comments
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: streamen-public-test-backlog
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.event.issue.number == 16 && github.event.repository.full_name == 'burnhardbot/feedback' && startsWith(github.event.comment.body, '/test ')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Protect persistent checklist invariants
+        run: python -m unittest discover -s tools/updates -p 'test_*.py' -v
+      - name: Check manual test command and GitHub identity
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+        run: python tools/updates/bound_tests.py
